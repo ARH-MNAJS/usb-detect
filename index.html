@@ -121,7 +121,7 @@
       statusEl.className = 'status';
 
       try {
-        const response = await fetch('http://localhost:11434', { method: 'GET' });
+        const response = await fetch('http://127.0.0.1:11434/', { method: 'GET' });
 
         if (response.ok) {
           statusEl.textContent = '✅ Site is Operational';
@@ -141,7 +141,6 @@
 
     function doSomethingCool() {
       alert("🎉 Boom! You're connected and something cool just happened!");
-      // You could add more animations, confetti, sound, or launch something else
     }
 
     window.onload = checkStatus;
