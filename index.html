@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Site Status</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      overflow: hidden;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 40px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      animation: fadeIn 1.5s ease;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+
+    .status {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin: 20px 0;
+      transition: all 0.5s ease;
+    }
+
+    .ready {
+      color: #00ff9c;
+      animation: pulse 2s infinite;
+    }
+
+    .not-ready {
+      color: #ff4b5c;
+    }
+
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    button {
+      padding: 12px 24px;
+      font-size: 1rem;
+      background-color: #ffffff33;
+      color: white;
+      border: 1px solid white;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button:hover:enabled {
+      background-color: #ffffff55;
+      transform: scale(1.05);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.07);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Site Status Checker</h1>
+    <div id="status" class="status">Checking...</div>
+    <div class="actions">
+      <button onclick="checkStatus()">🔄 Retry</button>
+      <button id="coolBtn" disabled onclick="doSomethingCool()">🚀 Launch Magic</button>
+    </div>
+  </div>
+
+  <script>
+    async function checkStatus() {
+      const statusEl = document.getElementById('status');
+      const coolBtn = document.getElementById('coolBtn');
+      statusEl.textContent = 'Checking...';
+      statusEl.className = 'status';
+
+      try {
+        const response = await fetch('http://localhost:11434', { method: 'GET' });
+
+        if (response.ok) {
+          statusEl.textContent = '✅ Site is Operational';
+          statusEl.classList.add('ready');
+          coolBtn.disabled = false;
+        } else {
+          statusEl.textContent = '❌ Site is Down';
+          statusEl.classList.add('not-ready');
+          coolBtn.disabled = true;
+        }
+      } catch (error) {
+        statusEl.textContent = '❌ Site is Down';
+        statusEl.classList.add('not-ready');
+        coolBtn.disabled = true;
+      }
+    }
+
+    function doSomethingCool() {
+      alert("🎉 Boom! You're connected and something cool just happened!");
+      // You could add more animations, confetti, sound, or launch something else
+    }
+
+    window.onload = checkStatus;
+  </script>
+</body>
+</html>
