@@ -5,45 +5,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Site Status</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
     body {
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
       height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
-      overflow: hidden;
     }
 
     .container {
       background: rgba(255, 255, 255, 0.1);
-      border-radius: 20px;
       padding: 40px;
+      border-radius: 20px;
       backdrop-filter: blur(10px);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
       text-align: center;
-      max-width: 400px;
-      width: 90%;
-      animation: fadeIn 1.5s ease;
+      width: 300px;
+      animation: fadeIn 1s ease-in-out;
     }
 
     h1 {
-      font-size: 2rem;
-      margin-bottom: 10px;
+      font-size: 1.8rem;
+      margin-bottom: 20px;
     }
 
-    .status {
-      font-size: 1.5rem;
-      font-weight: bold;
+    #status {
+      font-size: 1.4rem;
       margin: 20px 0;
-      transition: all 0.5s ease;
     }
 
     .ready {
@@ -55,21 +47,15 @@
       color: #ff4b5c;
     }
 
-    .actions {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
     button {
-      padding: 12px 24px;
+      padding: 12px 20px;
       font-size: 1rem;
+      border: none;
+      border-radius: 10px;
       background-color: #ffffff33;
       color: white;
-      border: 1px solid white;
-      border-radius: 10px;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: 0.3s ease;
     }
 
     button:hover:enabled {
@@ -82,68 +68,53 @@
       cursor: not-allowed;
     }
 
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: scale(0.95);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.07); }
     }
 
-    @keyframes pulse {
-      0%, 100% {
-        transform: scale(1);
-      }
-      50% {
-        transform: scale(1.07);
-      }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Site Status Checker</h1>
-    <div id="status" class="status">Checking...</div>
-    <div class="actions">
-      <button onclick="checkStatus()">🔄 Retry</button>
-      <button id="coolBtn" disabled onclick="doSomethingCool()">🚀 Launch Magic</button>
-    </div>
+    <div id="status">Checking...</div>
+    <button id="coolBtn" disabled onclick="doSomethingCool()">🚀 Launch Magic</button>
   </div>
 
   <script>
-    async function checkStatus() {
-      const statusEl = document.getElementById('status');
-      const coolBtn = document.getElementById('coolBtn');
-      statusEl.textContent = 'Checking...';
-      statusEl.className = 'status';
+    const statusEl = document.getElementById('status');
+    const coolBtn = document.getElementById('coolBtn');
 
-      try {
-        const response = await fetch('http://127.0.0.1:11434/', { method: 'GET' });
-
-        if (response.ok) {
-          statusEl.textContent = '✅ Site is Operational';
-          statusEl.classList.add('ready');
-          coolBtn.disabled = false;
-        } else {
-          statusEl.textContent = '❌ Site is Down';
-          statusEl.classList.add('not-ready');
-          coolBtn.disabled = true;
-        }
-      } catch (error) {
+    function setStatus(ok) {
+      if (ok) {
+        statusEl.textContent = '✅ Site is Operational';
+        statusEl.className = 'ready';
+        coolBtn.disabled = false;
+      } else {
         statusEl.textContent = '❌ Site is Down';
-        statusEl.classList.add('not-ready');
+        statusEl.className = 'not-ready';
         coolBtn.disabled = true;
       }
+    }
+
+    function checkOllamaViaScript() {
+      const script = document.createElement('script');
+      script.src = 'http://127.0.0.1:11434/';
+      script.onload = () => setStatus(true);
+      script.onerror = () => setStatus(false);
+      document.body.appendChild(script);
     }
 
     function doSomethingCool() {
       alert("🎉 Boom! You're connected and something cool just happened!");
     }
 
-    window.onload = checkStatus;
+    window.onload = checkOllamaViaScript;
   </script>
 </body>
 </html>
